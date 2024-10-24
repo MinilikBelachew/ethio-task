@@ -25,12 +25,7 @@ function AddTask({
 }) {
   return (
     <>
-      <Button
-  onClick={() => setopenTaskDialog(true)}
-  className="w-28 sticky bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all"
->
-  Add New Task
-</Button>
+
 
 <Dialog
   open={openTaskDialog}
@@ -44,24 +39,24 @@ function AddTask({
   }}
 >
   <DialogContent className="sm:max-w-[450px] bg-white/30 backdrop-blur-lg border border-white/50 shadow-xl rounded-xl p-6 transition-all">
-    {/* Loading Spinner */}
+  
     {loading ? (
       <div className="flex justify-center items-center py-10">
         <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500 border-solid"></div>
       </div>
     ) : null}
     
-    {/* Dialog Header */}
+   
     <DialogHeader className="text-center mb-4">
       <DialogTitle className="text-2xl font-bold text-gray-800">
         {currentEditTaskId ? "Edit Task" : "Add New Task"}
       </DialogTitle>
     </DialogHeader>
     
-    {/* Task Form */}
+
     <div className="grid gap-4">
       <div className="grid grid-cols-4 items-center gap-4">
-        <Label htmlFor="name" className="text-right text-gray-700 font-medium">
+        <Label htmlFor="name" className="text-right text-black font-medium text-md">
           Title
         </Label>
         <Input
@@ -78,7 +73,7 @@ function AddTask({
         />
       </div>
       <div className="grid grid-cols-4 items-center gap-4">
-        <Label htmlFor="detail" className="text-right text-gray-700 font-medium">
+        <Label htmlFor="detail" className="text-right text-black font-medium text-md">
           Task Details
         </Label>
         <Input
@@ -96,7 +91,7 @@ function AddTask({
       </div>
     </div>
     
-    {/* Dialog Footer */}
+    
     <DialogFooter className="mt-6">
       <Button
         type="button"

@@ -25,14 +25,13 @@ const Navbar = ({ setopenTaskDialog }) => {
               Home
             </a>
 
-            {location.pathname === "/task" && (
-              <Button
+\              <Button
                 onClick={() => setopenTaskDialog(true)}
                 className="w-28 bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all"
               >
                 Add New Task
               </Button>
-            )}
+            
 
             <a
               href="/task"

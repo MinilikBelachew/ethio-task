@@ -5,24 +5,31 @@ import { Calendar } from "@/components/ui/calendar";
 
 export default function CalendarTask() {
   const [date, setDate] = React.useState(new Date());
-  const [tasks, setTasks] = React.useState([]); // Store tasks
-  const [filteredTasks, setFilteredTasks] = React.useState([]); // Store tasks for the selected date
+  const [tasks, setTasks] = React.useState([]);
+  const [filteredTasks, setFilteredTasks] = React.useState([]);
 
-  // Example task data
-  const exampleTasks = [
-    { id: 1, date: new Date(2024, 10, 24), title: "Meeting with team" },
-    { id: 2, date: new Date(2024, 10, 25), title: "Project deadline" },
-    { id: 3, date: new Date(2024, 10, 24), title: "Doctor appointment" },
-  ];
-
-  // Update tasks based on the selected date
+  // Fetch tasks from API on component mount
   React.useEffect(() => {
-    const filtered = exampleTasks.filter(
-      (task) =>
-        task.date.toDateString() === date.toDateString()
+    async function fetchTasks() {
+      try {
+        const response = await fetch("/api/get-task"); // Update the endpoint if needed
+        const data = await response.json();
+        setTasks(data.tasks); // Assuming response contains tasks in an array
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      }
+    }
+
+    fetchTasks();
+  }, []);
+
+  // Filter tasks for the selected date
+  React.useEffect(() => {
+    const filtered = tasks.filter(
+      (task) => new Date(task.date).toDateString() === date.toDateString()
     );
     setFilteredTasks(filtered);
-  }, [date]);
+  }, [date, tasks]);
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md max-w-lg mx-auto md:max-w-2xl lg:max-w-3xl xl:max-w-4xl">
@@ -41,8 +48,9 @@ export default function CalendarTask() {
         {filteredTasks.length > 0 ? (
           <ul className="mt-2">
             {filteredTasks.map((task) => (
-              <li key={task.id} className="py-2 border-b">
-                {task.title}
+              <li key={task._id} className="py-2 border-b">
+                <h4 className="font-bold">{task.title}</h4>
+                <p>{task.detail}</p>
               </li>
             ))}
           </ul>

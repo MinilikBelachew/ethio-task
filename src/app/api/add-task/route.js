@@ -6,17 +6,25 @@ import { NextResponse } from "next/server";
 const AddNewTask = Joi.object({
   title: Joi.string().required(),
   detail: Joi.string().required(),
+  status: Joi.string().required(),
+  priority: Joi.string().required(),
+  dueDate: Joi.string().required(),
+
 });
 
 export async function POST(req) {
   try {
     await connectToDB();
     const extractTaskData=await req.json();
-    const { title, detail } = extractTaskData;
+    const { title, detail,status,priority,dueDate } = extractTaskData;
     
     const { error } = AddNewTask.validate({
       title,
       detail,
+      status,
+      priority,
+      dueDate,
+
     });
 
     if (error) {

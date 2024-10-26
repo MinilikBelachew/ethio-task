@@ -1,22 +1,31 @@
 "use client";
+
+import * as React from "react";
+import { Button } from "@/components/ui/button";
 import { FaEdit, FaTrash } from 'react-icons/fa';
 
-import { useEffect, useState } from "react";
-
-import AddTask from "../add-task";
-import GetTask from "../get-task/page";
+import { Calendar } from "@/components/ui/calendar";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardTitle,
-} from "@/components/ui/card";
-import { useRouter } from "next/navigation";
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import AddTask from "../add-task";
 import Navbar from "../navbar/page";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import Home from "@/app/page";
 
 const initialTaskData = {
   title: "",
   detail: "",
+  priority: "medium",
+  status: "pending",
+  dueDate: "",
 };
 
 function TaskManagement({ fetcheddata }) {
@@ -24,17 +33,16 @@ function TaskManagement({ fetcheddata }) {
   const [loading, setLoading] = useState(false);
   const [taskFormData, setTaskFormData] = useState(initialTaskData);
   const [currentEditTaskId, setCurrentEditTaskId] = useState(null);
-  console.log(taskFormData);
-
   const router = useRouter();
+
   useEffect(() => {
     router.refresh();
   }, []);
 
   async function handleSaveTaskData() {
+    setLoading(true);
     try {
-      setLoading(true);
-      const apiResponse =
+      const response =
         currentEditTaskId !== null
           ? await fetch(`/api/update-task?id=${currentEditTaskId}`, {
               method: "PUT",
@@ -44,32 +52,26 @@ function TaskManagement({ fetcheddata }) {
               method: "POST",
               body: JSON.stringify(taskFormData),
             });
-      const result = await apiResponse.json();
-      if (result?.success) {
+      const result = await response.json();
+      if (result.success) {
         setTaskFormData(initialTaskData);
         setopenTaskDialog(false);
-        setLoading(false);
         setCurrentEditTaskId(null);
         router.refresh();
       }
-      console.log(result);
-    } catch (error) {
-      console.log(error);
+    } finally {
       setLoading(false);
-
-      setTaskFormData(initialTaskData);
     }
   }
+
   async function handleDeleteTask(taskid) {
     try {
-      const apiResponse = await fetch(`/api/delete-task?id=${taskid}`, {
+      await fetch(`/api/delete-task?id=${taskid}`, {
         method: "DELETE",
       });
-      const result = await apiResponse.json();
-      if (result?.success) router.refresh();
-      console.log(result);
-    } catch (e) {
-      console.log(e);
+      router.refresh();
+    } catch (error) {
+      console.error(error);
     }
   }
 
@@ -78,13 +80,15 @@ function TaskManagement({ fetcheddata }) {
     setTaskFormData({
       title: taskdata?.title,
       detail: taskdata?.detail,
+      priority: taskdata?.priority,
+      status: taskdata?.status,
+      dueDate: taskdata?.dueDate,
     });
     setopenTaskDialog(true);
-    console.log(taskdata._id);
   }
 
   return (
-    <div className="min-h-screen flex flex-col gap-10 bg-gradient-to-r from-gray-300 to-indigo-400 p-6">
+    <div className="min-h-screen flex flex-col gap-10  p-6">
       <AddTask
         openTaskDialog={openTaskDialog}
         setopenTaskDialog={setopenTaskDialog}
@@ -102,15 +106,23 @@ function TaskManagement({ fetcheddata }) {
           fetcheddata.map((task) => (
             <div
               key={task.id}
-              className="bg-white/30  rounded-xl shadow-lg hover:shadow-2xl transition-transform transform hover:scale-[1.02] duration-300 border border-white/40 overflow-hidden"
+              className="bg-white/30 rounded-xl shadow-lg hover:shadow-2xl transition-transform transform hover:scale-[1.02] duration-300 border border-white/40 overflow-hidden"
             >
               <div className="p-6">
                 <h3 className="text-xl font-semibold text-gray-800 mb-2 truncate">
                   {task?.title}
                 </h3>
-
                 <p className="text-gray-600 mb-4 overflow-hidden line-clamp-2">
                   {task?.detail}
+                </p>
+                <p className="text-sm text-gray-500">
+                  <strong>Priority:</strong> {task?.priority}
+                </p>
+                <p className="text-sm text-gray-500">
+                  <strong>Status:</strong> {task?.status}
+                </p>
+                <p className="text-sm text-gray-500">
+                  <strong>Due Date:</strong> {task?.dueDate || "No due date"}
                 </p>
 
                 <div className="flex flex-col sm:flex-row justify-start gap-4 items-center mt-4">
@@ -119,8 +131,7 @@ function TaskManagement({ fetcheddata }) {
                     className="w-full sm:w-auto bg-blue-500 text-white px-4 py-2 rounded-full font-semibold hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-200 transition-all"
                   >
                     <span className="flex items-center justify-center">
-                    <FaEdit size={20} className='px-1'/>
-
+                      <FaEdit size={20} className="px-1" />
                       Update
                     </span>
                   </button>
@@ -129,8 +140,7 @@ function TaskManagement({ fetcheddata }) {
                     className="w-full sm:w-auto bg-red-500 text-white px-4 py-2 rounded-full font-semibold hover:bg-red-600 focus:outline-none focus:ring-4 focus:ring-red-200 transition-all"
                   >
                     <span className="flex items-center justify-center">
-                    <FaTrash size={20}  className='px-1'/>
-
+                      <FaTrash size={20} className="px-1" />
                       Delete
                     </span>
                   </button>
@@ -139,12 +149,11 @@ function TaskManagement({ fetcheddata }) {
             </div>
           ))
         ) : (
-          <p className="text-gray-500 text-center text-xl">
-            No tasks available
-          </p>
+          <p className="text-gray-500 text-center text-xl">No tasks available</p>
         )}
       </div>
     </div>
   );
 }
+
 export default TaskManagement;

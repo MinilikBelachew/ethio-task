@@ -5,6 +5,7 @@ import { useState } from "react";
 
 const Navbar = ({ setopenTaskDialog }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   return (
     <nav className="bg-white/30 backdrop-blur-lg border-b border-white/40 shadow-md fixed top-0 left-0 w-full z-50 h-16">
@@ -17,10 +18,17 @@ const Navbar = ({ setopenTaskDialog }) => {
           </div>
 
           <div className="flex items-center space-x-4">
+            <a
+              href="/"
+              className="text-gray-700 hover:text-blue-600 transition-colors"
+            >
+              Home
+            </a>
+
             {location.pathname === "/task" && (
               <Button
                 onClick={() => setopenTaskDialog(true)}
-                className="w-28 sticky text-white py-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 transition-all"
+                className="w-28 bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all"
               >
                 Add New Task
               </Button>
@@ -30,8 +38,40 @@ const Navbar = ({ setopenTaskDialog }) => {
               href="/task"
               className="text-gray-700 hover:text-blue-600 transition-colors"
             >
-              Task
+              All Tasks
             </a>
+
+            {/* Dropdown Menu for Task Status */}
+            <div className="relative">
+              <button
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="text-gray-700 hover:text-blue-600 transition-colors"
+              >
+                Task Status
+              </button>
+              {dropdownOpen && (
+                <div className="absolute right-0 z-10 mt-2 w-48 bg-white shadow-lg rounded-md">
+                  <a
+                    href="/completed"
+                    className="block px-4 py-2 text-gray-700 hover:bg-blue-100 transition-colors"
+                  >
+                    Completed Tasks
+                  </a>
+                  <a
+                    href="/inprogress"
+                    className="block px-4 py-2 text-gray-700 hover:bg-blue-100 transition-colors"
+                  >
+                    In Progress Tasks
+                  </a>
+                  <a
+                    href="/pending"
+                    className="block px-4 py-2 text-gray-700 hover:bg-blue-100 transition-colors"
+                  >
+                    Pending Tasks
+                  </a>
+                </div>
+              )}
+            </div>
 
             <a
               href="/calendar"
@@ -39,12 +79,6 @@ const Navbar = ({ setopenTaskDialog }) => {
             >
               Calendar
             </a>
-            {/* <Button
-              onClick={() => setopenTaskDialog(true)}
-              className="w-28 sticky bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all pt-10"
-            >
-              Add New Task
-            </Button> */}
 
             {/* Notifications */}
             <button className="relative text-gray-600 hover:text-blue-600">
@@ -93,7 +127,7 @@ const Navbar = ({ setopenTaskDialog }) => {
         <div className="md:hidden px-2 pt-2 pb-3 space-y-1 sm:px-3">
           <a
             href="/calendar"
-            className="block text-gray-700 hover:text-blue-600 transition-colors"
+            className="block text-gray-700 hover:text-blue-600 hover:bg-slate-800  transition-colors"
           >
             Calendar
           </a>
